@@ -96,45 +96,41 @@ class ApiClient {
 
 
   Future<Map<String, dynamic>> changePassword(String oldPassword, String newPassword, String confirmPassword) async {
-    final String username = "username";//Assign from the login token
-    final Map<String, dynamic> passwordData = {
-      'oldPassword': oldPassword,
-      'newPassword': newPassword,
-      'confirmPassword': confirmPassword,
-    };
+  final String apiUrl = 'http://62.171.137.149:30080/authentication/change-password';
+  final String accessToken = "MY_ACCESS_TOKEN_FROM_LOGIN"; 
 
-    final String apiUrl = 'http://62.171.137.149:30080/authentication/authentication/change-password$username';
-    final String ua = await userAgent();
+  try {
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      body: jsonEncode({
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken', 
+      },
+    );
 
-    try {
-      final response = await http.put(
-        Uri.parse(apiUrl),
-        body: jsonEncode(passwordData),
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': ua,
-        },
-      );
+    print('Received response from change password API: ${response.statusCode} - ${response.body}');
 
-      print('Received response from change password API: ${response.statusCode} - ${response.body}');
+    if (response.statusCode == 200) {
+      return {'status': 'success', 'message': 'Password changed successfully'};
+    } else if (response.statusCode == 400 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 404 || response.statusCode == 500) {
+      Map<String, dynamic> errorResponse = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        return {'status': 'success', 'message': 'Password changed successfully'};
-      } else if (response.statusCode == 400 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 404 || response.statusCode == 500) {
-        Map<String, dynamic> errorResponse = jsonDecode(response.body);
-
-        if (errorResponse.containsKey('code') && errorResponse.containsKey('message')) {
-          return {'status': 'error', 'code': errorResponse['code'], 'message': errorResponse['message']};
-        } else {
-          return {'status': 'error', 'message': 'An unexpected error occurred'};
-        }
+      if (errorResponse.containsKey('code') && errorResponse.containsKey('message')) {
+        return {'status': 'error', 'code': errorResponse['code'], 'message': errorResponse['message']};
       } else {
         return {'status': 'error', 'message': 'An unexpected error occurred'};
       }
-    } catch (e) {
-      print('Error during password change: $e');
-      return {'status': 'error', 'message': 'An error occurred during password change.'};
+    } else {
+      return {'status': 'error', 'message': 'An unexpected error occurred'};
     }
+  } catch (e) {
+    print('Error during password change: $e');
+    return {'status': 'error', 'message': 'An error occurred during password change.'};
   }
 
   String getUsernameFromToken(String token) {
