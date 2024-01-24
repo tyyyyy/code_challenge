@@ -2,9 +2,9 @@
 
 Technical Code Challenge.
 
-## Getting Started
-
-## App Installation
+## Overview
+The application supports both dark and light modes to enhance user experience and accommodate different preferences and lighting conditions.
+Users can toggle between these modes through the application settings.
 To install the app download and double click or long press the app and follow the instructions
 
 
