@@ -4,7 +4,7 @@ Technical Code Challenge.
 
 ## Overview
 The application supports both dark and light modes to enhance user experience and accommodate different preferences and lighting conditions.
-Users can toggle between these modes through the application settings.
+Users can toggle between these modes through the your phone settings night and day mode.
 To install the app download and double click or long press the app and follow the instructions
 
 
